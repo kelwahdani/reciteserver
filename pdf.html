@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>شهادة إتمام مستوى</title>
+    <style>
+      @font-face {
+        font-family: 'Majalla';
+        src: url('file://${regularFontPath}') format('truetype');
+        font-weight: 400;
+      }
+
+      @font-face {
+        font-family: 'Majalla';
+        src: url('file://${boldFontPath}') format('truetype');
+        font-weight: 700;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Majalla', serif;
+
+        margin: 0;
+        padding: 0;
+        background: #f0f0f0;
+      }
+
+      .certificate-container {
+        width: 210mm;
+        height: 297mm;
+        margin: 0 auto;
+        position: relative;
+        background-image: url('https://res.cloudinary.com/dp73fgjub/image/upload/v1758783419/Certificate_Empty_with_logo_only_ro7vnd.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      /* Repositioned header to match original design */
+      .header {
+        text-align: center;
+        margin-top: 180px;
+        margin-bottom: 20px;
+      }
+
+      .certificate-title {
+        font-size: 64px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 5px;
+        line-height: 1;
+      }
+
+      .subtitle {
+        font-size: 28px;
+        color: #333;
+        font-weight: 400;
+      }
+
+      /* Positioned badge to match the original design location */
+      .badge-container {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .certificate-badge {
+        width: 100px;
+        height: 100px;
+      }
+
+      /* Adjusted content positioning and spacing to match original */
+      .content {
+        padding: 0 60px;
+        text-align: right;
+        line-height: 1.6;
+      }
+
+      .presentation-text {
+        font-size: 24px;
+        color: #333;
+      }
+
+      .recipient-name {
+        font-size: 26px;
+        font-weight: 700;
+        color: #1a1a1a;
+        text-align: start;
+      }
+
+      .completion-text {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 0px;
+      }
+
+      .course-title {
+        font-size: 26px;
+        font-weight: bold;
+        color: #1a1a1a;
+        text-align: right;
+      }
+
+      /* Repositioned grade section to match original layout */
+      .grade-section {
+        text-align: right;
+      }
+
+      .grade-label {
+        font-size: 20px;
+        color: #333;
+      }
+
+      .grade-value {
+        font-size: 36px;
+        font-weight: 700;
+        color: #1a1a1a;
+        display: inline-block;
+      }
+
+      /* Adjusted date section positioning and mixed Arabic-English text */
+      .date-section {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        text-align: right;
+        line-height: 1.4;
+      }
+
+      .date-section .english-text {
+        font-family: Arial, sans-serif;
+        direction: ltr;
+        display: inline;
+      }
+
+      /* Repositioned skills section to match original */
+      .skills-section {
+        margin-top: 30px;
+      }
+
+      .skills-title {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 0px;
+        font-weight: bold;
+      }
+
+      .skills-list {
+        list-style: none;
+        padding: 0;
+        margin-right: 25px;
+      }
+
+      .skills-list li {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 6px;
+        position: relative;
+        padding-right: 20px;
+        line-height: 1.4;
+      }
+
+      .skills-list li::before {
+        content: '•';
+        color: #333;
+        font-size: 35px;
+        position: absolute;
+        right: 0;
+        top: -5px;
+      }
+
+      /* Added responsive design for different screen sizes */
+      @media screen and (max-width: 1200px) {
+        .certificate-container {
+          width: 100vw;
+          height: 141.4vw; /* Maintain A4 ratio */
+          max-width: 210mm;
+          max-height: 297mm;
+        }
+
+        .header {
+          margin-top: 15%;
+        }
+
+        .certificate-title {
+          font-size: 5.5vw;
+        }
+
+        .subtitle {
+          font-size: 2.5vw;
+        }
+
+        .content {
+          padding: 0 5%;
+        }
+
+        .presentation-text,
+        .completion-text,
+        .grade-label,
+        .skills-title {
+          font-size: 24px;
+        }
+
+        .recipient-name {
+          font-size: 2.8vw;
+        }
+
+        .course-title {
+          font-size: 22px;
+        }
+
+        .grade-value {
+          font-size: 3.2vw;
+        }
+
+        .date-section {
+          font-size: 24px;
+        }
+
+        .skills-list li {
+          font-size: 20px;
+        }
+
+        .certificate-badge {
+          width: 6vw;
+          height: 6vw;
+        }
+      }
+
+      @media screen and (max-width: 768px) {
+        .certificate-title {
+          font-size: 42px;
+        }
+
+        .subtitle {
+          font-size: 20px;
+        }
+
+        .presentation-text,
+        .completion-text,
+        .grade-label,
+        .skills-title {
+          font-size: 20px;
+        }
+
+        .recipient-name {
+          font-size: 22px;
+        }
+
+        .course-title {
+          font-size: 18px;
+        }
+
+        .grade-value {
+          font-size: 24px;
+        }
+
+        .date-section {
+          font-size: 16px;
+        }
+
+        .skills-list li {
+          font-size: 16px;
+        }
+
+        .certificate-badge {
+          width: 60px;
+          height: 60px;
+        }
+      }
+
+      /* Print styles for PDF generation */
+      @media print {
+        body {
+          margin: 0;
+          padding: 0;
+          background: white;
+        }
+
+        .certificate-container {
+          width: 100%;
+          height: 100vh;
+          margin: 0;
+          padding: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="certificate-container">
+      <div class="header">
+        <h1 class="certificate-title">شهادة</h1>
+        <p class="subtitle">إتمام مستوى</p>
+
+        <div class="badge-container">
+          <img
+            src="https://res.cloudinary.com/dp73fgjub/image/upload/v1758788326/certificate_icon_uavueg.png"
+            alt="Certificate Badge"
+            class="certificate-badge"
+          />
+        </div>
+      </div>
+
+      <div class="content">
+        <p class="presentation-text">تُقدَّم هذه الشهادة إلى:</p>
+
+        <div class="recipient-name">${fullName}</div>
+
+        <p class="completion-text">الذي أتمَّ (ت) بنجاح:</p>
+
+        <div class="course-title">
+          المستوى المبتدئ من رواية ورش عن نافع من طريق الأزرق.
+        </div>
+
+        <div class="grade-section">
+          <p class="grade-label">الدرجة المحصَّلة:</p>
+          <div class="grade-value">[${formattedPercentage}]</div>
+        </div>
+
+        <p class="date-section">
+          مُنِحت في ${formattedDate} من قِبَل
+          <span class="english-text">Recite One</span>.
+        </p>
+
+        <div class="skills-section">
+          <p class="skills-title">وقد أظهر (ت) المتعلم (ة) القدرة على:</p>
+          <ul class="skills-list">
+            <li>فهم المبادئ الأساسية لعلم التجويد.</li>
+            <li>التعريف برواية ورش عن نافع من طريق الأزرق.</li>
+            <li>إدراك أحكام النون الساكنة والتنوين.</li>
+            <li>التمييز بين أحكام الميم الساكنة الأصلية وميم الجمع.</li>
+            <li>معرفة مواضع التفخيم والترقيق - أحكام اللام والراء.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

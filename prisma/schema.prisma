@@ -1,0 +1,364 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRoleEnum {
+  USER
+  ADMIN
+  SUPERADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+}
+
+enum ChapterLevel {
+  BEGINNER
+  MEDIUM
+  ADVANCED
+}
+
+enum UserLevel {
+  FRENCH
+  BEGINNER
+  MEDIUM
+  ADVANCED
+}
+
+enum ChapterStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum ProgressStatus {
+  PROGRESS
+  COMPLETE
+}
+
+model User {
+  id                            String          @id @default(auto()) @map("_id") @db.ObjectId
+  firstName                     String
+  lastName                      String
+  email                         String?         @unique
+  certificateEmail              String?
+  certificateName               String?
+  password                      String
+  address                       String?
+  userName                      String?         @unique
+  fcmToken                      String?
+  lavel                         UserLevel?      @default(BEGINNER)
+  dailyGoal                     Int?
+  daailyGoalNotification        Boolean?        @default(true)
+  role                          UserRoleEnum    @default(USER)
+  status                        UserStatus      @default(ACTIVE)
+  progressStatus                ProgressStatus? @default(PROGRESS)
+  image                         String?
+  number                        String?
+  otp                           String?
+  otpExpiry                     DateTime?
+  readStart                     DateTime?
+  readEnd                       DateTime?
+  activeCount                   Int?            @default(0)
+  blockForWeek                  Boolean?        @default(false)
+  blockForWeekTime              DateTime?
+  isEmailVerified               Boolean         @default(true)
+  emailVerificationToken        String?
+  emailVerificationTokenExpires DateTime?
+  isFinalCheckPointCompleted    Boolean?  @default(false)
+
+  progress     UserProgress[]
+  saved        SavedQuestion[]
+  certificates Certificate[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  Answer Answer[]
+
+  CompleteChapter  CompleteChapter[]
+  DailyChallenge   DailyChallenge[]
+  ReportQuestion   ReportQuestion[]
+  PushNotification PushNotification[]
+
+  WeekDay      WeekDay[]
+  InviteFriend InviteFriend[]
+
+  @@map("users")
+  userStar userStar[]
+ 
+}
+
+model AdminSetting {
+  id                      String  @id @default(auto()) @map("_id") @db.ObjectId
+  certificateAutoApproval Boolean @default(false)
+  access                  String  @unique @default("Admin")
+}
+
+enum ChapterType {
+  CHAPTER
+  FINALCHECHPOINT
+}
+
+model Chapter {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  level     ChapterLevel  @default(BEGINNER)
+  order     Int?
+  image     String
+  content   String?
+  status    ChapterStatus @default(INACTIVE)
+  type      ChapterType   @default(CHAPTER)
+  lessons   Lesson[]
+  createdAt DateTime      @default(now())
+
+  Question Question[]
+
+  CompleteChapter CompleteChapter[]
+
+  Answer Answer[]
+}
+
+enum lessonType {
+  LESSON
+  CHECHPOINT
+  FINALCHECHPOINT
+}
+
+model Lesson {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  chapterId String        @db.ObjectId
+  chapter   Chapter       @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  title     String
+  subTitle  String?
+  type      lessonType?   @default(LESSON)
+  content   String?
+  level     ChapterLevel  @default(BEGINNER)
+  order     Int?
+  status    ChapterStatus @default(INACTIVE)
+  image     String
+
+  createdAt DateTime @default(now())
+
+  UserProgress UserProgress[]
+
+  Question Question[]
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  PUT_IN_ORDER
+  FLIPCARD
+  MATCH_PAIRS
+}
+
+enum documentType {
+  TEXT
+  AUDIO
+  VIDEO
+}
+
+model Question {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  chapterId    String?       @db.ObjectId
+  chapter      Chapter?      @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  lessonId     String?       @db.ObjectId
+  lesson       Lesson?       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  level        ChapterLevel  @default(BEGINNER)
+  type         QuestionType
+  title        String
+  document     String?
+  documentType documentType?
+  point        Int?
+  explanation  String?
+
+  order   Int?
+  options Json[]
+  answer  Json?
+
+  suggestion String
+  // Shob dhoroner proshno-er shothik uttor manage korar jonno
+
+  fixedScore Int @default(5)
+
+  answers Answer[]
+  savedBy SavedQuestion[]
+
+  createdAt DateTime @default(now())
+}
+
+// model QuestionOption {
+//   id          String    @id @default(auto()) @map("_id") @db.ObjectId
+//   questionId  String    @db.ObjectId
+//   question    Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+//   text        String
+//   isCorrect   Boolean   @default(false)
+// }
+
+model Answer {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  questionId String?   @db.ObjectId
+  question   Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  userId     String?   @db.ObjectId
+  user       User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapterId  String?   @db.ObjectId
+  chapter    Chapter?  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  isCorrect  Boolean @default(false)
+  userAnswer Json?
+
+  createdAt DateTime @default(now())
+}
+
+model UserProgress {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  userId   String @db.ObjectId
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId String @db.ObjectId
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  completed                Boolean  @default(false)
+  lessonCount              Int?
+  unLocked                 Boolean  @default(false)
+  completelyWithPercentage Boolean  @default(false)
+  score                    Int      @default(0)
+  date                     DateTime @default(now())
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @default(now())
+
+  @@unique([userId, lessonId], name: "userId_lessonId_unique")
+}
+
+model SavedQuestion {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String   @db.ObjectId
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questionId String   @db.ObjectId
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  savedAt    DateTime @default(now())
+}
+
+model ReportQuestion {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId   String  @db.ObjectId
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  document String?
+
+  email   String
+  details String
+
+  createdAt DateTime @default(now())
+}
+
+model CompleteChapter {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapterId String   @db.ObjectId
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, chapterId]) // ✅ prevent duplicate chapter completion
+}
+
+enum CertificateStatus {
+  PENDING
+  APPROVE
+}
+
+model Certificate {
+  id        String            @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String            @unique @db.ObjectId
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email     String
+  content   String?
+  status    CertificateStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @default(now())
+}
+
+model DailyChallenge {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date                   DateTime @default(now())
+  type                   String
+  target                 Int
+  progress               Int      @default(0)
+  completedCount         Int      @default(0) // কয়টা lesson complete হয়েছে
+  strongPerformanceCount Int      @default(0) // কয়টা 75%+ complete হয়েছে
+  completed              Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date, type])
+}
+
+enum WeekDayStatus {
+  COMPLETE
+  PENDING
+  FAILED
+}
+
+model WeekDay {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  name      String // Sunday, Monday etc
+  order     Int? // ✅ add this line
+  userId    String        @db.ObjectId
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  active    Boolean       @default(false)
+  status    WeekDayStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model PushNotification {
+  id     String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId String   @db.ObjectId
+  user   User     @relation(fields: [userId], references: [id])
+  date   DateTime // যে দিনের জন্য notification track হচ্ছে
+
+  title       String // Push notification title
+  message     String // Push notification body
+  status      NotificationStatus @default(PENDING) // PENDING / SENT / FAILED
+  isCompleted Boolean            @default(false) // user daily goal পূরণ করেছে কি না
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+model InviteFriend {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model userStar {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String   @unique @db.ObjectId   // 👈 এটাকে unique করো
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  star       Int       @default(0)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
