@@ -30,6 +30,7 @@ app.use(
       'http://204.197.173.249:3889',
       'http://72.60.83.59:5000',
       'http://72.60.83.59:3000',
+      'https://recite-one-dashboard-main.vercel.app'
       
     ],
     credentials: true,
